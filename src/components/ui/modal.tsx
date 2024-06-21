@@ -13,26 +13,25 @@ interface ModalProps {
   children: React.ReactNode
   title: string
   description: string
+  isOpen: boolean
+  onClose: () => void
 }
 
-export function Modal({ children, title, description }: ModalProps) {
+export function Modal({ children, title, description, isOpen, onClose }: ModalProps) {
+    const onChange = (open : boolean) => {
+        if(!open) {
+            onClose()
+        }
+    }
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline">Edit Profile</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+    <Dialog open={isOpen} onOpenChange={onChange}>
+        <DialogContent>
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>
-            {description}
-          </DialogDescription>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        {children}
-        <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter>
-      </DialogContent>
+        <div>{children}</div>
+       </DialogContent>
     </Dialog>
   )
 }

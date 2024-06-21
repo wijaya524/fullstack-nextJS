@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs'
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/core/dark-mode/theme-provider";
 import Navbar from "@/components/core/navbar/page";
+import { ModalProvider } from "@/provider/modal-provider";
+import { ToastProvider } from "@/provider/toast-provider";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +20,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <ClerkProvider>
     <html lang="en">
@@ -28,8 +32,9 @@ export default function RootLayout({
             disableTransitionOnChange
           >
         <header>
-        <Navbar />
         </header>
+        <ModalProvider/>
+       <ToastProvider/>
         <main>
           {children}
         </main>
