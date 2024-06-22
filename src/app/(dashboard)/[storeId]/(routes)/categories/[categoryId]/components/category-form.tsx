@@ -12,12 +12,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Heading } from "@/components/ui/heading";
-import ImageUploads from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue  } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useOrigin } from "@/hooks/use-origin";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Banner, Category } from "@prisma/client";
+import {  Banner, Category } from "@prisma/client";
 import axios from "axios";
 import { Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -28,6 +28,7 @@ import * as z from "zod";
 
 interface CategoryFormProps {
   initialData: Category | null;
+  banners: Banner[]
 }
 
 const formSchema = z.object({
@@ -37,7 +38,7 @@ const formSchema = z.object({
 
 type CategoryFormValue = z.infer<typeof formSchema>;
 
-export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
+export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, banners }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -64,9 +65,12 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
     try {
       setLoading(true);
       if (initialData) {
-      await axios.patch(`/api/${params.storeId}/categories/${params.categoryId}`, data);
-    } else {
-      await axios.post(`/api/${params.storeId}/categories`, data);
+        await axios.patch(
+          `/api/${params.storeId}/categories/${params.categoryId}`,
+          data
+        );
+      } else {
+        await axios.post(`/api/${params.storeId}/categories`, data);
       }
       router.refresh();
       router.push(`/${params.storeId}/categories`);
@@ -81,7 +85,9 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`);
+      await axios.delete(
+        `/api/${params.storeId}/categories/${params.categoryId}`
+      );
       router.refresh();
       router.push(`/${params.storeId}/categories`);
       toast.success("Category has deleted");
@@ -137,7 +143,34 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData }) => {
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="bannerId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Banner</FormLabel>
+                  <FormControl>
+                   <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue defaultValue={field.value}
+                         placeholder="Select Banner"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                       {banners.map((banner) => (
+                        <SelectItem key={banner.id} value={banner.id}>
+                          {banner.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                   </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <Button type="submit" disabled={loading}>
             {action}

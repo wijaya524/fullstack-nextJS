@@ -6,6 +6,7 @@ import { usePathname, useParams } from "next/navigation";
 export default function MainNav() {
   const pathname = usePathname();
   const params = useParams();
+  
   const routes = [
     {
       label: "Settings",
@@ -27,7 +28,13 @@ export default function MainNav() {
       href: `/${params.storeId}/categories`,
       active: pathname === `/${params.storeId}/categories`,
     },
+    {
+      label: "Products",
+      href: `/${params.storeId}/products`,
+      active: pathname === `/${params.storeId}/products`,
+    },
   ];
+
   return (
     <nav className="flex gap-2" aria-label="Breadcrumb">
       {routes.map((route) => (
